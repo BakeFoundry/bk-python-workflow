@@ -1,9 +1,16 @@
 name: All CI
 
 on:
-  push:
-  pull_request:
+  workflow_call:
 
 jobs:
+
   secret-scan:
-    uses: BakeFoundry/bk-secret-scan-workflow/.github/workflows/main.yml@v1
+    name: "Secret Scan"
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Secret Scan
+          uses: BakeFoundry/bk-secret-scan-workflow@v1
