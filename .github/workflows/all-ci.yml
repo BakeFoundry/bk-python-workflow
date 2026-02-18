@@ -1,0 +1,9 @@
+name: All CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  secret-scan:
+    uses: BakeFoundry/bk-secret-scan-workflow/.github/workflows/bk-secret-scan-workflow.yml@main
