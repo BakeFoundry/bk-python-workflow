@@ -6,4 +6,4 @@ on:
 
 jobs:
   secret-scan:
-    uses: BakeFoundry/bk-secret-scan-workflow/.github/workflows/bk-secret-scan-workflow.yml@v1
+    uses: BakeFoundry/bk-secret-scan-workflow/.github/workflows/main.yml@v1
