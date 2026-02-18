@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  semantic-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Semantic Versioning
+        uses: bakefoundry/bk-release-workflow@v1
+        with:
+          github-token: ${{ github.token }}
+          dry-run: ${{ github.ref_name != 'main' }}
