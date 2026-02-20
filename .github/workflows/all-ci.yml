@@ -20,5 +20,17 @@ jobs:
         - name: Secret Scan
           uses: BakeFoundry/bk-secret-scan-workflow@v1
 
+  code-quality:
+    name: "Code Quality Check"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: write
+
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
         - name: Code Quality Check
           uses: BakeFoundry/bk-sonar-scan-workflow@v1
