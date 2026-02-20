@@ -19,3 +19,6 @@ jobs:
 
         - name: Secret Scan
           uses: BakeFoundry/bk-secret-scan-workflow@v1
+
+        - name: Code Quality Check
+          uses: BakeFoundry/bk-sonar-scan-workflow@v1
