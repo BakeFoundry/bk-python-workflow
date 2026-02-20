@@ -10,7 +10,7 @@ Currently, the `all-ci.yml` workflow executes the following steps:
 
 1.  **Parallel Security and Quality Checks**:
     -   **Secret Scanning**: Triggers [`bk-secret-scan-workflow`](https://github.com/BakeFoundry/bk-secret-scan-workflow) to detect sensitive information.
-    -   **Code Quality Check**: Runs SonarQube analysis to ensure code maintainability and reliability.
+    -   **Code Quality Check**: Triggers [`bk-sonar-scan-workflow`](https://github.com/BakeFoundry/bk-sonar-scan-workflow) to run SonarQube analysis to ensure code maintainability and reliability.
     -   **Vulnerability Check**: Performs SAST (Static Application Security Testing) to identify security vulnerabilities.
 
     *If **any** of these checks fail, the developer is immediately notified.*
