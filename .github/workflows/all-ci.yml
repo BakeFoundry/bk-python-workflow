@@ -69,7 +69,9 @@ jobs:
           uses: actions/checkout@v4
 
         - name: Bake AMI Scan
-          uses: BakeFoundry/bk-bake-ami-workflow@v1
+          uses: BakeFoundry/bk-bake-ami-workflow@feat/getbaseami
           with:
-            languages: python
-            github-token: ${{secrets.GITHUB_TOKEN}}
+            ami_name:  'Amazon Linux 2023 kernel-6.1*'
+            ami_owner: 'amazon'
+            ami_architecture: 'x86_64'
+            ami_os_type: 'linux'
