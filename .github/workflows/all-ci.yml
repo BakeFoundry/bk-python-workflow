@@ -63,6 +63,7 @@ jobs:
       issues: write
       contents: write
       security-events: write
+      id-token: write
 
     steps:
         - name: Checkout
