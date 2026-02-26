@@ -53,3 +53,23 @@ jobs:
           with:
             languages: python
             github-token: ${{secrets.GITHUB_TOKEN}}
+
+  bake-ami-scan:
+    name: "Bake AMI Scan"
+    needs: [secret-scan, code-quality, sast-scan]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: write
+      security-events: write
+
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Bake AMI Scan
+          uses: BakeFoundry/bk-bake-ami-workflow@v1
+          with:
+            languages: python
+            github-token: ${{secrets.GITHUB_TOKEN}}
