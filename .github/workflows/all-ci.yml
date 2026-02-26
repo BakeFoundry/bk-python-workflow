@@ -75,3 +75,4 @@ jobs:
             ami_owner: 'amazon'
             ami_architecture: 'x86_64'
             ami_os_type: 'linux'
+            role_to_assume: ${{secrets.BK_ROLE_TO_ASSUME}}
