@@ -70,7 +70,7 @@ jobs:
           uses: actions/checkout@v4
 
         - name: Bake AMI Scan
-          uses: BakeFoundry/bk-bake-ami-workflow@feat/getbaseami
+          uses: BakeFoundry/bk-bake-ami-workflow@v1
           with:
             ami_name:  'Amazon Linux 2023 kernel-6.1*'
             ami_owner: 'amazon'
