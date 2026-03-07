@@ -2,6 +2,17 @@ name: All CI
 
 on:
   workflow_call:
+    inputs:
+      baking_recipe_playbook:
+        description: "Path to the baking recipe playbook"
+        required: false
+        type: string
+        default: "bake/playbook/bakeami.yml"
+      application_name:
+        description: "Name of the application"
+        required: false
+        type: string
+        default: ${{ github.event.repository.name }}
 
 jobs:
 
@@ -77,3 +88,5 @@ jobs:
             ami_architecture: 'x86_64'
             ami_os_type: 'linux'
             role_to_assume: ${{secrets.BK_ROLE_TO_ASSUME}}
+            baking_recipe_playbook: "${{inputs.baking_recipe_playbook}}"
+            application_name: "${{inputs.application_name}}"
