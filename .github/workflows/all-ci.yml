@@ -13,6 +13,10 @@ on:
         required: false
         type: string
         default: ${{ github.event.repository.name }}
+      version_tag:
+        description: "Version tag"
+        required: false
+        type: string
 
 jobs:
 
