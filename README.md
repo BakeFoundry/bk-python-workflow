@@ -15,14 +15,16 @@ Currently, the `all-ci.yml` workflow executes the following steps:
 
     *If **any** of these checks fail, the developer is immediately notified.*
 
-2.  **Build**:
-    -   Compiles the application and runs unit tests.
+2.  **Calculate Tag**:
+    -   Automatically computes a version tag based on the branch.
+    -   On `main`: uses the latest semver tag as-is (e.g., `1.2.3`). Defaults to `1.0.0` if no tags exist.
+    -   On feature branches: appends the sanitized branch name and a UTC timestamp in `ddmmyyyyhhss` format (e.g., `1.2.3-feat-my-feature-120320261430`).
     -   Executed only if all parallel checks pass.
 
 3.  **AMI Release**:
-    -   **AMI Baking**: Creates an immutable Amazon Machine Image (AMI) with the application artifacts.
+    -   **AMI Baking**: Creates an immutable Amazon Machine Image (AMI) with the application artifacts, tagged with the calculated version.
     -   **AMI Scan**: Scans the baked AMI for vulnerabilities.
-    -   Executed only after a successful build.
+    -   Executed only after a successful tag calculation.
 
 *Failure at any stage triggers a notification to the developer.*
 
@@ -44,10 +46,10 @@ graph TD
     CQ -->|Success| Join
     SAST -->|Success| Join
 
-    Join -->|Yes| Build[Build]
+    Join -->|Yes| CT[Calculate Tag]
 
-    Build -->|Failure| Notify
-    Build -->|Success| AMI[AMI Baking]
+    CT -->|Failure| Notify
+    CT -->|Success| AMI[AMI Baking]
 
     AMI -->|Failure| Notify
     AMI -->|Success| AS[AMI Scan]
@@ -62,7 +64,7 @@ graph TD
     classDef standard fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
 
     class Parallel,Join condition;
-    class SS,CQ,SAST,Build,AMI,AS standard;
+    class SS,CQ,SAST,CT,AMI,AS standard;
     class Notify failure;
     class End success;
 ```
