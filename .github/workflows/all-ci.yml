@@ -15,7 +15,6 @@ on:
         default: ${{ github.event.repository.name }}
 
 jobs:
-
   secret-scan:
     name: "Secret Scan"
     runs-on: ubuntu-latest
@@ -25,11 +24,11 @@ jobs:
       contents: write
 
     steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Secret Scan
-          uses: BakeFoundry/bk-secret-scan-workflow@v1
+      - name: Secret Scan
+        uses: BakeFoundry/bk-secret-scan-workflow@v1
 
   code-quality:
     name: "Code Quality Check"
@@ -40,11 +39,11 @@ jobs:
       contents: write
 
     steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Code Quality Check
-          uses: BakeFoundry/bk-sonar-scan-workflow@v1
+      - name: Code Quality Check
+        uses: BakeFoundry/bk-sonar-scan-workflow@v1
 
   sast-scan:
     name: "SAST Scan"
@@ -56,14 +55,14 @@ jobs:
       security-events: write
 
     steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: SAST Scan
-          uses: BakeFoundry/bk-sast-workflow@v1
-          with:
-            languages: python
-            github-token: ${{secrets.GITHUB_TOKEN}}
+      - name: SAST Scan
+        uses: BakeFoundry/bk-sast-workflow@v1
+        with:
+          languages: python
+          github-token: ${{secrets.GITHUB_TOKEN}}
 
   calculate-tag:
     name: "Calculate Tag"
@@ -75,17 +74,17 @@ jobs:
       version_tag: ${{ steps.calc.outputs.version_tag }}
 
     steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-        - name: Calculate Version Tag
-          id: calc
-          run: bash scripts/calculate-tag.sh
+      - name: Calculate Version Tag
+        id: calc
+        run: bash scripts/calculate-tag.sh
 
   bake-ami-scan:
-    name: "Bake AMI Scan"
+    name: "Bake AMI & Scan"
     needs: [calculate-tag]
     runs-on: ubuntu-latest
     permissions:
@@ -96,17 +95,17 @@ jobs:
       id-token: write
 
     steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Bake AMI Scan
-          uses: BakeFoundry/bk-bake-ami-workflow@v1
-          with:
-            ami_name:  'al2023-ami-2023.*-kernel-6.1-x86_64'
-            ami_owner: 'amazon'
-            ami_architecture: 'x86_64'
-            ami_os_type: 'linux'
-            role_to_assume: ${{secrets.BK_ROLE_TO_ASSUME}}
-            baking_recipe_playbook: "${{inputs.baking_recipe_playbook}}"
-            application_name: "${{inputs.application_name}}"
-            version_tag: "${{needs.calculate-tag.outputs.version_tag}}"
+      - name: Bake AMI & Scan
+        uses: BakeFoundry/bk-bake-ami-workflow@v1
+        with:
+          ami_name: "al2023-ami-2023.*-kernel-6.1-x86_64"
+          ami_owner: "amazon"
+          ami_architecture: "x86_64"
+          ami_os_type: "linux"
+          role_to_assume: ${{secrets.BK_ROLE_TO_ASSUME}}
+          baking_recipe_playbook: "${{inputs.baking_recipe_playbook}}"
+          application_name: "${{inputs.application_name}}"
+          version_tag: "${{needs.calculate-tag.outputs.version_tag}}"
