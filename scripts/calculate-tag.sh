@@ -2,7 +2,8 @@
 set -euo pipefail
 
 # Get the current branch name
-BRANCH_NAME="${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
+# GITHUB_HEAD_REF is set for pull requests, GITHUB_REF_NAME for pushes
+BRANCH_NAME="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}}"
 
 # Fetch all tags
 git fetch --tags --force 2>/dev/null || true
