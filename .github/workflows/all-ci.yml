@@ -79,9 +79,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Checkout workflow scripts
+        uses: actions/checkout@v4
+        with:
+          repository: BakeFoundry/bk-python-workflow
+          path: .bk-python-workflow
+
       - name: Calculate Version Tag
         id: calc
-        run: bash scripts/calculate-tag.sh
+        run: bash .bk-python-workflow/scripts/calculate-tag.sh
 
   bake-ami-scan:
     name: "Bake AMI & Scan"
