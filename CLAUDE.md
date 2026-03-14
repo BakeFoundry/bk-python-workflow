@@ -26,8 +26,11 @@ Three security/quality jobs run **in parallel**:
 2. **code-quality** → `BakeFoundry/bk-sonar-scan-workflow@v1` (SonarQube)
 3. **sast-scan** → `BakeFoundry/bk-sast-workflow@v1` (Python vulnerability scanning)
 
-Only if **all three pass** does the gating job run:
-4. **bake-ami-scan** → `BakeFoundry/bk-bake-ami-workflow@v1` (creates/scans AMI via Ansible playbook on AWS)
+Only if **all three pass**:
+4. **calculate-tag** — runs `scripts/calculate-tag.sh` to compute a version tag. On `main`: uses the latest semver tag (e.g., `1.2.3`), defaulting to `1.0.0`. On feature branches: appends sanitized branch name + UTC timestamp (e.g., `1.2.3-feat-my-feature-1203202614`).
+
+Only after tag calculation:
+5. **bake-ami-scan** → `BakeFoundry/bk-bake-ami-workflow@v1` (creates/scans AMI via Ansible playbook on AWS, using the computed `version_tag`)
 
 Any failure triggers a Discord notification.
 
@@ -37,12 +40,17 @@ Any failure triggers a Discord notification.
 |-------|---------|-------------|
 | `baking_recipe_playbook` | `bake/playbook/bakeami.yml` | Ansible playbook path for AMI baking |
 | `application_name` | repository name | App name passed to downstream workflows |
-| `version_tag` | (none) | Version tag passed to AMI baking workflow |
+
+Note: `version_tag` is **not** an input — it is computed internally by the `calculate-tag` job via `scripts/calculate-tag.sh`.
 
 ### Required Secrets
 
 - `BK_ROLE_TO_ASSUME` — AWS IAM role ARN for OIDC authentication
 - `BK_DISCORD_WEBHOOK` — Discord webhook URL for notifications
+
+## Scripts
+
+`scripts/calculate-tag.sh` — computes the version tag used by `bake-ami-scan`. It reads `GITHUB_HEAD_REF` (PR context) or `GITHUB_REF_NAME` (push context) to determine the branch, fetches all tags, and outputs `version_tag` to `$GITHUB_OUTPUT`.
 
 ## How Consuming Repositories Use This
 
@@ -53,7 +61,6 @@ jobs:
     uses: BakeFoundry/bk-python-workflow/.github/workflows/all-ci.yml@v1
     with:
       application_name: "my-app"
-      version_tag: "v1.2.3"
     secrets:
       BK_ROLE_TO_ASSUME: ${{ secrets.BK_ROLE_TO_ASSUME }}
       BK_DISCORD_WEBHOOK: ${{ secrets.BK_DISCORD_WEBHOOK }}
