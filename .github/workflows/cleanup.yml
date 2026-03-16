@@ -1,0 +1,50 @@
+name: Cleanup
+
+on:
+  workflow_call:
+    inputs:
+      branch_name:
+        description: "Branch name to sanitize and use for cleanup"
+        required: true
+        type: string
+      application_name:
+        description: "Name of the application"
+        required: false
+        type: string
+        default: ${{ github.event.repository.name }}
+
+jobs:
+  sanitize-branch:
+    name: "Sanitize Branch Name"
+    runs-on: ubuntu-latest
+    outputs:
+      sanitized_branch: ${{ steps.sanitize.outputs.sanitized_branch }}
+
+    steps:
+      - name: Sanitize Branch Name
+        id: sanitize
+        run: |
+          SANITIZED=$(echo "${{ inputs.branch_name }}" | sed 's/\//-/g')
+          echo "sanitized_branch=$SANITIZED" >> "$GITHUB_OUTPUT"
+
+  cleanup-amis:
+    name: "Cleanup AMIs"
+    needs: [sanitize-branch]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      contents: write
+      security-events: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cleanup AMIs
+        uses: BakeFoundry/bk-cleanup-ami-workflow@v1
+        with:
+          role_to_assume: ${{ secrets.BK_ROLE_TO_ASSUME }}
+          application_name: "${{ inputs.application_name }}"
+          branch_name: "${{ needs.sanitize-branch.outputs.sanitized_branch }}"
